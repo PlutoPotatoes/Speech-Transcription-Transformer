@@ -2,7 +2,7 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 
-#TODO Create embedding model for downsampling and embedding .wav files
+#TODO Create embedding model for downsampling and embedding .wav files (Ryan)
 
 
 class ResidualDownSampleBlock(nn.Module):
