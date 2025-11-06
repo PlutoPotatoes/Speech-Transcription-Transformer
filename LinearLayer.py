@@ -1,1 +1,0 @@
-#TODO Create linear output layer to output token probabilities for the softmax function

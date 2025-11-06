@@ -7,7 +7,7 @@ import torch.nn as nn
 
 class VectorQuantizer(nn.Module):
     def __init__(self, num_embeddings, embedding_dim, commitment_cost=0.25):
-        super().init()
+        super().__init__()
         self.num_embeddings = num_embeddings
         self.embedding_dim = embedding_dim
 
@@ -29,7 +29,7 @@ class VectorQuantizer(nn.Module):
         )
 
         #update all x gradient throughout the whole network up until now and calculate loss
-        e_latent_loss = torch.mean((quantized.detatch()-x)**2)
+        e_latent_loss = torch.mean((quantized.detach()-x)**2)
         #update quantized layers
         q_latent_loss = torch.mean((quantized-x.detach())**2)
 
