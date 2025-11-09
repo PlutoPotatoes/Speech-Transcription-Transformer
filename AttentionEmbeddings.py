@@ -90,12 +90,13 @@ class Transformer(nn.Module):
         
 
 if __name__ == "__main__":
-    embed_size = 128
+    embed_size = 16
     num_layers=3
     max_seq_len = 15
 
     model = Transformer(embed_size, num_layers, max_seq_len)
-    x = torch.randn(2, 10, embed_size)
+    x = torch.randn(64, 2042, embed_size)
+    print(x.shape)
     print(model(x).shape)
 
 

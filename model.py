@@ -45,11 +45,14 @@ class TranscribeModel(nn.Module):
 
     def forward(self, x: torch.Tensor):
         loss = torch.tensor(0.0)
+        x = x.unsqueeze(1)
         x = self.downsampling_network(x)
+        print(x.shape)
         x = self.transformer(x)
         x, loss = self.rvq(x)
         x = self.output_layer(x)
         x = torch.log_softmax(x, dim=-1)
+        print(x.shape)
         return x, loss
     
     def save(self, path:str):
