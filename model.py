@@ -47,12 +47,10 @@ class TranscribeModel(nn.Module):
         loss = torch.tensor(0.0)
         x = x.unsqueeze(1)
         x = self.downsampling_network(x)
-        print(x.shape)
         x, loss = self.rvq(x)
         x = self.transformer(x)
         x = self.output_layer(x)
         x = torch.log_softmax(x, dim=-1)
-        print(x.shape)
         return x, loss
     
     def save(self, path:str):
@@ -80,4 +78,3 @@ if __name__ == "__main__":
     )
     x = torch.randn(4, 1, 237680)
     out, loss = model(x)
-    print(out.shape)

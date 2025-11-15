@@ -54,7 +54,6 @@ class DownsamplingNetwork(nn.Module):
         i=1
         for layer in self.layers:
             x = layer(x)
-            print(f"layer {i} shape:{x.shape}")
             i+=1
         x = self.final_conv(x)
         x =  x.transpose(1,2)

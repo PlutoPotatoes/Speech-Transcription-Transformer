@@ -39,7 +39,7 @@ class SelfAttentionLayer(nn.Module):
         query = self.query_dense(embeddings)
         key = self.key_dense(embeddings)
         value = self.value_dense(embeddings)
-        attention, _ = calculate_attention(value, key, query)
+        attention, _ = calculate_attention(query, key, value)
         return attention
     
 

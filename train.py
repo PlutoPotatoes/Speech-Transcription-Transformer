@@ -15,11 +15,11 @@ vq_warmup_steps = 1000
 vq_final_loss_weight  = 0.5
 num_epochs = 1000
 num_examples = 100
-model_id = "test39"
-num_batch_repeats = 1
+model_id = "test1"
+num_batch_repeats = 500
 
 starting_steps = 1
-BATCH_SIZE = 128
+BATCH_SIZE = 32
 LEARNING_RATE = 0.005
 
 def run_loss_function(log_probs, target, blank_token):
@@ -54,10 +54,10 @@ def main():
     else:
     '''
     model = TranscribeModel(
-        num_codebooks=5,
-        codebook_size=32,
+        num_codebooks=10,
+        codebook_size=64,
         embedding_dim=32,
-        num_transformer_layers=2,
+        num_transformer_layers=4,
         vocab_size=len(tokenizer.get_vocab()),
         strides=[6,6,6],
         initial_mean_pooling_kernel_size=4,
@@ -69,7 +69,7 @@ def main():
 
     print(f"{num_trainable_params} Parameters")
 
-    optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=LEARNING_RATE)
 
     dataloader = get_dataset(
         batch_size = BATCH_SIZE,
@@ -86,7 +86,7 @@ def main():
         for idx, batch in enumerate(dataloader):
             print(curr_batch)
             for repeat_batch in range(num_batch_repeats):
-                print("repeating")
+                print(f"repeat number:{repeat_batch}")
                 #may have to update these based on dataset
                 #should tokenized text be target?
                 audio = batch["audio"]
@@ -146,7 +146,6 @@ def main():
                 str = ""
                 for letter in letters:
                     str = str + vocab[letter.item()]
-                
                 print(str)
                 print(text[0])
                 print([vocab[t] for t in target[0]])
