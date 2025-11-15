@@ -15,7 +15,8 @@ def collate_fn(batch):
     if has_input_ids:
         max_ids_len = max([len(item["input_ids"]) for item in batch])
     audio_tensor = torch.stack(
-        [F.pad(item["audio"], (0,max_audio_len-item["audio"].shape[0]))
+        [F.pad(item["audio"], 
+        (0,max_audio_len - item["audio"].shape[0]))
          for item in batch]
     )
 
@@ -24,11 +25,12 @@ def collate_fn(batch):
         "text": [item["text"] for item in batch]
     }
     if has_input_ids:
+        
         input_ids = torch.stack(
             [F.pad(
                 torch.tensor(item["input_ids"]),
                 (0, max_ids_len - len(item["input_ids"])),
-                value=0
+                value=0,
             )
             for item in batch]
         )
@@ -83,5 +85,5 @@ if __name__ == "__main__":
         audio=batch["audio"]
         input_ids = batch["input_ids"]
         print(audio.shape)
-        print(input_ids.shape)
+        print(input_ids.shape) 
         break

@@ -1,26 +1,25 @@
 import os
+os.environ["TOKENIZERS_PARALLELISM"] = "true"
+os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"
+import torch
 from dataset import get_dataset, get_tokenizer
 from model import TranscribeModel
 from torch import nn
 from torch.utils.tensorboard import SummaryWriter
-import torch
 
-os.environ["TOKENIZERS_PARALLELISM"] = "true"
-os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"
-
+vocab = ['□', 'A', 'B', 'C', 'D', 'E', 'F', 'G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z', ' ', '\'']
 torch.autograd.set_detect_anomaly(True)
 
 vq_initial_loss_weight = 10
 vq_warmup_steps = 1000
 vq_final_loss_weight  = 0.5
-num_epochs = 10
-starting_steps = 0
+num_epochs = 1000
 num_examples = 100
-model_id = "test37"
+model_id = "test39"
 num_batch_repeats = 1
 
-starting_steps = 0
-BATCH_SIZE = 64
+starting_steps = 1
+BATCH_SIZE = 128
 LEARNING_RATE = 0.005
 
 def run_loss_function(log_probs, target, blank_token):
@@ -55,23 +54,27 @@ def main():
     else:
     '''
     model = TranscribeModel(
-        num_codebooks=2,
+        num_codebooks=5,
         codebook_size=32,
-        embedding_dim=64,
+        embedding_dim=32,
         num_transformer_layers=2,
         vocab_size=len(tokenizer.get_vocab()),
         strides=[6,6,6],
         initial_mean_pooling_kernel_size=4,
         max_seq_length=2000
-    ).to(device)
+    )
+    #.to(device)
 
     num_trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+
     print(f"{num_trainable_params} Parameters")
+
     optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
+
     dataloader = get_dataset(
         batch_size = BATCH_SIZE,
         num_examples=num_examples,
-        num_workers=1
+        num_workers=4,
     )
 
     ctc_losses = []
@@ -96,6 +99,7 @@ def main():
                     audio = torch.nn.functional.pad(audio, (0,0,0,target.shape[1]-audio.shape[1]))
                     print(f"Audio padded to shape: {audio.shape}")
 
+                #convert to our processing device (for cuda)
                 audio = audio.to(device)
                 target = target.to(device)
 
@@ -137,10 +141,17 @@ def main():
                     avg_vq_loss = sum(vq_losses)/len(vq_losses)
                     avg_loss = avg_ctc_loss + vq_loss_weight * avg_vq_loss
                     print(f"Average loss: {avg_loss}")
-
-                print(text)
-                #FIXME figure out how to run a prediction with model()
                 
+                letters = torch.argmax(output[0], dim=1)
+                str = ""
+                for letter in letters:
+                    str = str + vocab[letter.item()]
+                
+                print(str)
+                print(text[0])
+                print([vocab[t] for t in target[0]])
+                print(len(target[0]))
+                print('---------------------------------')
             curr_batch+=1
 
 

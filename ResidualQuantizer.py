@@ -1,12 +1,11 @@
 import torch
 import torch.nn as nn
 
-#TODO Create Residual Quantizer to map embeddings to tokens
 
 
 
 class VectorQuantizer(nn.Module):
-    def __init__(self, num_embeddings, embedding_dim, commitment_cost=0.25):
+    def __init__(self, num_embeddings, embedding_dim, commitment_cost=0.5):
         super().__init__()
         self.num_embeddings = num_embeddings
         self.embedding_dim = embedding_dim
