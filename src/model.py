@@ -2,7 +2,7 @@ from torch import nn
 import torch
 from ConvolutionalEmbeddings import DownsamplingNetwork
 from AttentionEmbeddings import Transformer
-from ResidualQuantizer import ResidualVectorQuantizer
+from src.ResidualQuantizer import ResidualVectorQuantizer
 
 class TranscribeModel(nn.Module):
     def __init__(
