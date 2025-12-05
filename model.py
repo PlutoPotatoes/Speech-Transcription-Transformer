@@ -59,8 +59,8 @@ class TranscribeModel(nn.Module):
 
     def load(path:str):
         print("Loading model from:", path)
-        model = TranscribeModel(**torch.load(path)["options"])
-        model.load_state_dict(torch.load(path)["model"])
+        model = TranscribeModel(**torch.load(path, map_location=torch.device('cpu'))["options"])
+        model.load_state_dict(torch.load(path, map_location=torch.device('cpu'))["model"])
         return model
     
 

@@ -6,6 +6,7 @@ from dataset import get_dataset, get_tokenizer
 from model import TranscribeModel
 from torch import nn
 from torch.utils.tensorboard import SummaryWriter
+from scipy.interpolate import interp1d as lerp
 
 vocab = ['□', 'A', 'B', 'C', 'D', 'E', 'F', 'G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z', ' ', '\'']
 torch.autograd.set_detect_anomaly(True)
@@ -13,13 +14,14 @@ torch.autograd.set_detect_anomaly(True)
 vq_initial_loss_weight = 10
 vq_warmup_steps = 1000
 vq_final_loss_weight  = 0.5
-num_epochs = 1000
+num_epochs = 100
 num_examples = 100
-model_id = "test1"
-num_batch_repeats = 500
+model_id = "test5"
+starting_num_batch_repeats = 100
+final_batch_repeats = 1
 
 starting_steps = 1
-BATCH_SIZE = 32
+BATCH_SIZE = 100
 LEARNING_RATE = 0.005
 
 def run_loss_function(log_probs, target, blank_token):
@@ -56,11 +58,11 @@ def main():
     model = TranscribeModel(
         num_codebooks=10,
         codebook_size=64,
-        embedding_dim=32,
-        num_transformer_layers=4,
+        embedding_dim = 32,
+        num_transformer_layers=8,
         vocab_size=len(tokenizer.get_vocab()),
         strides=[6,6,6],
-        initial_mean_pooling_kernel_size=4,
+        initial_mean_pooling_kernel_size=2,
         max_seq_length=2000
     )
     #.to(device)
@@ -84,7 +86,7 @@ def main():
     for i in range(num_epochs):
         curr_batch=1
         for idx, batch in enumerate(dataloader):
-            print(curr_batch)
+            num_batch_repeats = int(starting_num_batch_repeats * (1-(i/num_epochs)) + final_batch_repeats*(i/num_epochs))
             for repeat_batch in range(num_batch_repeats):
                 print(f"repeat number:{repeat_batch}")
                 #may have to update these based on dataset
@@ -152,6 +154,7 @@ def main():
                 print(len(target[0]))
                 print('---------------------------------')
             curr_batch+=1
+    torch.save(model, f'{model_id}')
 
 
 if __name__ == "__main__":
